@@ -7,5 +7,5 @@ export const generateRandomString = (length: number): string => {
         result[i] = CHARS[Math.floor(Math.random() * CHARS_LEN)]!;
     }
 
-    return result.join();
+    return result.join('');
 };
