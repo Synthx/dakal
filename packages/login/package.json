@@ -1,0 +1,12 @@
+{
+    "name": "dakal-login",
+    "type": "module",
+    "main": "./src/index.ts",
+    "scripts": {
+        "start": "bun run src/index.ts"
+    },
+    "dependencies": {
+        "dakal-core": "workspace:*"
+    },
+    "devDependencies": {}
+}
