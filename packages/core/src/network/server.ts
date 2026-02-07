@@ -32,17 +32,22 @@ export abstract class Server {
                 },
                 data: (socket, data) => {
                     const id = socket.data.id;
-                    if (!this.#clients.has(id)) {
+                    const client = this.#clients.get(id);
+                    if (!client) {
                         return;
                     }
 
-                    const client = this.#clients.get(id);
-                    const message = decoder.decode(data);
-                    const messages = message.split(MESSAGE_DELIMITER).filter((m) => m.length > 0);
+                    try {
+                        const message = decoder.decode(data);
+                        const messages = message.split(MESSAGE_DELIMITER).filter((m) => m.length > 0);
 
-                    messages.forEach((message) => {
-                        client?.handleData(message);
-                    });
+                        messages.forEach((message) => {
+                            client.handleData(message);
+                        });
+                    } catch (error) {
+                        this.#logger.error(`Critical error handling data for client ${id}: ${String(error)}`);
+                        client.kick();
+                    }
                 },
                 close: (socket) => {
                     const id = socket.data.id;
