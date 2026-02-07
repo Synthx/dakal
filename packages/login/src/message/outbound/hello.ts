@@ -3,14 +3,17 @@ import { generateRandomString } from '../../function/random.ts';
 
 const KEY_LENGTH = 32;
 
-export class HelloMessage extends OutboundMessage<string> {
-    override readonly header = 'HC';
+export class HelloMessage extends OutboundMessage {
+    static override readonly header = 'HC';
+
+    readonly key: string;
 
     constructor() {
-        super(generateRandomString(KEY_LENGTH));
+        super();
+        this.key = generateRandomString(KEY_LENGTH);
     }
 
     override serialize(): string {
-        return this.header + this.payload;
+        return HelloMessage.header + this.key;
     }
 }
