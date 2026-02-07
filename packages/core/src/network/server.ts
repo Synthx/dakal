@@ -51,7 +51,7 @@ export abstract class Server {
                     }
 
                     this.#clients.delete(id);
-                    this.#clients.get(id)?.close();
+                    this.#clients.get(id)?.kick();
                 },
             },
         });
@@ -61,7 +61,7 @@ export abstract class Server {
 
     stop() {
         this.#clients.forEach((client) => {
-            client.close();
+            client.kick();
         });
         this.#clients.clear();
 
