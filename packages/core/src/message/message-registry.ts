@@ -27,12 +27,12 @@ export class MessageRegistry {
         }
 
         if (current.message) {
-            throw new Error(`Message ${header} already registered`);
+            throw new Error(`Header ${header} already registered by message ${current.message.name}`);
         }
 
         current.message = message;
         this.#count++;
-        this.#logger.debug(`Registered message ${header}`);
+        this.#logger.debug(`Message ${message.name}#${header} registered`);
     }
 
     count() {

@@ -8,6 +8,10 @@ export class ServerSelectedMessage extends InboundMessage {
     }
 
     static override parse(data: string): ServerSelectedMessage {
+        if (data.trim().length === 0) {
+            throw new Error('Invalid server id');
+        }
+
         const id = Number(data);
         if (isNaN(id)) {
             throw new Error('Invalid server id');

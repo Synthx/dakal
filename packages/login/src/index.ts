@@ -1,7 +1,9 @@
-import { registerLoginMessages } from './message';
+import { registerLoginHandlers } from './message/handler.ts';
+import { registerLoginMessages } from './message/registry.ts';
 import { LoginServer } from './network/server.ts';
 
 registerLoginMessages();
+registerLoginHandlers();
 
 const port = parseInt(process.env.SERVER_PORT);
 

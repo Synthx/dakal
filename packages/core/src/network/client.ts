@@ -1,17 +1,17 @@
-import { randomUUIDv7 } from 'bun';
 import { MESSAGE_DELIMITER } from '../config';
 import { OutboundMessage } from '../message';
 import type { Socket } from '../type';
-import { logger } from '../util';
+import { generateIdFromIp, logger } from '../util';
 
 export abstract class Client {
-    readonly #logger = logger.child({});
+    readonly #logger = logger.child({ name: Client.name });
 
     readonly id: string;
     protected readonly socket: Socket;
 
     constructor(socket: Socket) {
-        this.id = randomUUIDv7();
+        this.id = generateIdFromIp(socket.remoteAddress);
+
         this.socket = socket;
         this.socket.data = {
             id: this.id,
@@ -19,21 +19,21 @@ export abstract class Client {
     }
 
     handleConnect() {
-        this.#logger.debug(`${this.id} --- connected`);
+        this.#logger.debug(`#${this.id} --- connected`);
     }
 
     handleData(data: string) {
-        this.#logger.debug(`${this.id} <<< ${data}`);
+        this.#logger.debug(`#${this.id} <<< ${data}`);
     }
 
     sendMessage(message: OutboundMessage) {
         const data = message.serialize();
         this.socket.write(data + MESSAGE_DELIMITER);
-        this.#logger.debug(`${this.id} >>> ${data}`);
+        this.#logger.debug(`#${this.id} >>> ${data}`);
     }
 
-    close() {
+    kick() {
         this.socket.close();
-        this.#logger.debug(`${this.id} !!! closed`);
+        this.#logger.debug(`#${this.id} !!! closed`);
     }
 }

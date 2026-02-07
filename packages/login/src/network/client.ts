@@ -1,20 +1,32 @@
-import { Client } from 'dakal-core';
-import { loginMessageDispatcher, loginMessageRegistry } from '../message';
+import { Client, logger } from 'dakal-core';
+import { loginMessageDispatcher } from '../message/handler.ts';
 import { HelloMessage } from '../message/outbound/hello.ts';
+import { loginMessageRegistry } from '../message/registry.ts';
 import type { LoginClientState } from '../type/client.ts';
 import type { Credentials } from '../type/credentials.ts';
+import { Version } from '../util/version.ts';
 
 export class LoginClient extends Client {
+    readonly #logger = logger.child({ name: LoginClient.name });
+
     #state: LoginClientState = 'READY';
-    #version?: string;
+    #version?: Version;
     #credentials?: Credentials;
+
+    get version() {
+        return this.#version;
+    }
+
+    get credentials() {
+        return this.#credentials;
+    }
 
     override handleData(data: string): void {
         super.handleData(data);
 
         switch (this.#state) {
             case 'WAITING_VERSION':
-                this.#version = data;
+                this.#version = Version.from(data);
                 this.#state = 'WAITING_CREDENTIALS';
                 break;
             case 'WAITING_CREDENTIALS': {
@@ -29,6 +41,7 @@ export class LoginClient extends Client {
             case 'READY': {
                 const message = loginMessageRegistry.parse(data);
                 if (!message) {
+                    this.#logger.warn(`Unknown message: ${data}`);
                     return;
                 }
 

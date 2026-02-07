@@ -7,7 +7,7 @@
     ],
     "scripts": {
         "format": "bunx prettier . --write",
-        "lint": "bunx prettier . --check && npx eslint .",
+        "lint": "bunx prettier . --check && npx eslint . && bunx tsc --noEmit",
         "test": "bun test"
     },
     "devDependencies": {
