@@ -24,30 +24,35 @@ export class LoginClient extends Client {
     override handleData(data: string): void {
         super.handleData(data);
 
-        switch (this.#state) {
-            case 'WAITING_VERSION':
-                this.#version = Version.from(data);
-                this.#state = 'WAITING_CREDENTIALS';
-                break;
-            case 'WAITING_CREDENTIALS': {
-                const [username, encodedPassword] = data.split('\n#');
-                this.#credentials = {
-                    username,
-                    encodedPassword,
-                };
-                this.#state = 'READY';
-                break;
-            }
-            case 'READY': {
-                const message = loginMessageRegistry.parse(data);
-                if (!message) {
-                    this.#logger.warn(`Unknown message: ${data}`);
-                    return;
+        try {
+            switch (this.#state) {
+                case 'WAITING_VERSION':
+                    this.#version = Version.from(data);
+                    this.#state = 'WAITING_CREDENTIALS';
+                    break;
+                case 'WAITING_CREDENTIALS': {
+                    const [username, encodedPassword] = data.split('\n#');
+                    this.#credentials = {
+                        username,
+                        encodedPassword,
+                    };
+                    this.#state = 'READY';
+                    break;
                 }
+                case 'READY': {
+                    const message = loginMessageRegistry.parse(data);
+                    if (!message) {
+                        this.#logger.warn(`Unknown or malformed message: ${data}`);
+                        return;
+                    }
 
-                void loginMessageDispatcher.dispatch(this, message);
-                break;
+                    void loginMessageDispatcher.dispatch(this, message);
+                    break;
+                }
             }
+        } catch (error) {
+            this.#logger.error(error, `Protocol error from ${this.id}`);
+            this.kick();
         }
     }
 

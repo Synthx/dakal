@@ -66,6 +66,12 @@ export class MessageRegistry {
 
         const data = packet.substring(lastMatchLength);
 
-        return lastMatch.parse(data);
+        try {
+            return lastMatch.parse(data);
+        } catch (error) {
+            this.#logger.error(error, `Failed to parse message ${lastMatch.name}`);
+
+            return undefined;
+        }
     }
 }
