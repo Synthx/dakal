@@ -19,14 +19,14 @@ export abstract class Client {
     }
 
     handleConnect() {
-        logger.debug(`${this.id} --- connected`);
+        this.#logger.debug(`${this.id} --- connected`);
     }
 
     handleData(data: string) {
-        logger.debug(`${this.id} <<< ${data}`);
+        this.#logger.debug(`${this.id} <<< ${data}`);
     }
 
-    sendMessage(message: OutboundMessage<unknown>) {
+    sendMessage(message: OutboundMessage) {
         const data = message.serialize();
         this.socket.write(data + MESSAGE_DELIMITER);
         this.#logger.debug(`${this.id} >>> ${data}`);

@@ -1,30 +1,40 @@
 import { Client } from 'dakal-core';
-import { Config } from '../config/config.ts';
+import { loginMessageDispatcher, loginMessageRegistry } from '../message';
 import { HelloMessage } from '../message/outbound/hello.ts';
-import { WrongCredentialsMessage } from '../message/outbound/wrong-credentials.ts';
-import { WrongVersionMessage } from '../message/outbound/wrong-version.ts';
 import type { LoginClientState } from '../type/client.ts';
+import type { Credentials } from '../type/credentials.ts';
 
 export class LoginClient extends Client {
     #state: LoginClientState = 'READY';
+    #version?: string;
+    #credentials?: Credentials;
 
     override handleData(data: string): void {
         super.handleData(data);
 
         switch (this.#state) {
             case 'WAITING_VERSION':
-                if (!Config.instance.verifyVersion(data)) {
-                    this.sendMessage(new WrongVersionMessage(Config.instance.version));
-                    this.close();
-                }
-
+                this.#version = data;
                 this.#state = 'WAITING_CREDENTIALS';
                 break;
-            case 'WAITING_CREDENTIALS':
-                // todo: const [username, encodedPassword] = data.split('\n#');
-                this.sendMessage(new WrongCredentialsMessage());
-                this.close();
+            case 'WAITING_CREDENTIALS': {
+                const [username, encodedPassword] = data.split('\n#');
+                this.#credentials = {
+                    username,
+                    encodedPassword,
+                };
+                this.#state = 'READY';
                 break;
+            }
+            case 'READY': {
+                const message = loginMessageRegistry.parse(data);
+                if (!message) {
+                    return;
+                }
+
+                void loginMessageDispatcher.dispatch(this, message);
+                break;
+            }
         }
     }
 

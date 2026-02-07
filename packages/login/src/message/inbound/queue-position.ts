@@ -1,11 +1,9 @@
 import { InboundMessage } from 'dakal-core';
 
 export class QueuePositionMessage extends InboundMessage {
-    override readonly header = 'Af';
+    static override readonly header = 'Af';
 
-    override parse(data: string): QueuePositionMessage {
-        console.log(data);
-
+    static override parse(): QueuePositionMessage {
         return new QueuePositionMessage();
     }
 }

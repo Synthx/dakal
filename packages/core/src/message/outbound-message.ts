@@ -1,5 +1,5 @@
 import { BaseMessage } from './base-message.ts';
 
-export abstract class OutboundMessage<Payload = void> extends BaseMessage<Payload> {
+export abstract class OutboundMessage extends BaseMessage {
     abstract serialize(): string;
 }
