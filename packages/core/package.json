@@ -2,6 +2,12 @@
     "name": "dakal-core",
     "type": "module",
     "main": "./src/index.ts",
+    "scripts": {
+        "format": "bunx prettier . --write",
+        "lint": "bunx prettier . --check && bunx eslint .",
+        "test": "bun test",
+        "build": "bun build src/index.ts --target bun --outdir dist"
+    },
     "dependencies": {
         "pino": "^10.3.0"
     },
