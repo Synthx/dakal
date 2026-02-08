@@ -3,13 +3,13 @@ import type { InboundMessageClass } from '../type';
 import { logger } from '../util';
 import type { InboundMessage } from './inbound-message.ts';
 
-type MessageHandler = (client: Client, message: InboundMessage) => void | Promise<void>;
+type MessageHandler<T extends Client> = (client: T, message: InboundMessage) => void | Promise<void>;
 
-export class MessageDispatcher {
-    readonly #handlers = new Map<string, MessageHandler[]>();
+export class MessageDispatcher<T extends Client> {
+    readonly #handlers = new Map<string, MessageHandler<T>[]>();
     readonly #logger = logger.child({ name: MessageDispatcher.name });
 
-    on(message: InboundMessageClass, handler: MessageHandler) {
+    on(message: InboundMessageClass, handler: MessageHandler<T>) {
         const handlers = this.#handlers.get(message.header) ?? [];
         handlers.push(handler);
 
@@ -18,7 +18,7 @@ export class MessageDispatcher {
         return () => this.off(message, handler);
     }
 
-    off(message: InboundMessageClass, handler: MessageHandler): void {
+    off(message: InboundMessageClass, handler: MessageHandler<T>): void {
         const handlers = this.#handlers.get(message.header);
         if (!handlers) {
             return;
@@ -32,7 +32,7 @@ export class MessageDispatcher {
         handlers.splice(index, 1);
     }
 
-    async dispatch(client: Client, message: InboundMessage): Promise<void> {
+    async dispatch(client: T, message: InboundMessage): Promise<void> {
         const id = (message.constructor as unknown as InboundMessageClass).header;
 
         const handlers = this.#handlers.get(id);
