@@ -12,6 +12,7 @@
         "noEmit": true,
         "experimentalDecorators": true,
         "allowJs": true,
+        "esModuleInterop": true,
         // Best practices
         "strict": true,
         "strictNullChecks": true,
