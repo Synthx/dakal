@@ -1,4 +1,5 @@
 import { Client, logger } from 'dakal-core';
+import { generateRandomString } from '../function/random.ts';
 import { loginMessageDispatcher } from '../message/handler.ts';
 import { HelloMessage } from '../message/outbound/hello.ts';
 import { loginMessageRegistry } from '../message/registry.ts';
@@ -6,12 +7,19 @@ import type { LoginClientState } from '../type/client.ts';
 import type { Credentials } from '../type/credentials.ts';
 import { Version } from '../util/version.ts';
 
+const KEY_LENGTH = 32;
+
 export class LoginClient extends Client {
     readonly #logger = logger.child({ name: LoginClient.name });
 
+    readonly #key = generateRandomString(KEY_LENGTH);
     #state: LoginClientState = 'READY';
     #version?: Version;
     #credentials?: Credentials;
+
+    get key() {
+        return this.#key;
+    }
 
     get version() {
         return this.#version;
@@ -31,7 +39,7 @@ export class LoginClient extends Client {
                     this.#state = 'WAITING_CREDENTIALS';
                     break;
                 case 'WAITING_CREDENTIALS': {
-                    const [username, encodedPassword] = data.split('\n#');
+                    const [username, encodedPassword] = data.split('\n#1');
                     this.#credentials = {
                         username,
                         encodedPassword,
@@ -59,7 +67,7 @@ export class LoginClient extends Client {
     override handleConnect(): void {
         super.handleConnect();
 
-        this.sendMessage(new HelloMessage());
+        this.sendMessage(new HelloMessage(this.key));
         this.#state = 'WAITING_VERSION';
     }
 }

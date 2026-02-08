@@ -16,8 +16,4 @@ export class Config {
 
         return Config.#instance;
     }
-
-    verifyVersion(rawVersion: string): boolean {
-        return this.version.equals(Version.from(rawVersion));
-    }
 }
