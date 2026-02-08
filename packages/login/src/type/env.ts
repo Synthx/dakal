@@ -3,5 +3,6 @@ declare module 'bun' {
     interface Env {
         SERVER_PORT: string;
         CLIENT_VERSION: string;
+        DATABASE_URL: string;
     }
 }
