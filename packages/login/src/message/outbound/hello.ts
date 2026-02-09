@@ -8,6 +8,6 @@ export class HelloMessage extends OutboundMessage {
     }
 
     override serialize(): string {
-        return HelloMessage.header + this.key;
+        return this.key;
     }
 }

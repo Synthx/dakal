@@ -1,9 +1,9 @@
-import { OutboundMessage } from 'dakal-core';
+import { EMPTY_STRING, OutboundMessage } from 'dakal-core';
 
 export class WrongCredentialsMessage extends OutboundMessage {
     static override readonly header = 'AlEf';
 
     override serialize(): string {
-        return WrongCredentialsMessage.header;
+        return EMPTY_STRING;
     }
 }

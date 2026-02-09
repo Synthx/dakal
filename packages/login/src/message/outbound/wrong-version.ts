@@ -9,6 +9,6 @@ export class WrongVersionMessage extends OutboundMessage {
     }
 
     serialize(): string {
-        return WrongVersionMessage.header + this.version.toString();
+        return this.version.toString();
     }
 }

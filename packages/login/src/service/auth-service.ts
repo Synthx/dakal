@@ -1,9 +1,11 @@
 import { Config } from '../config/config.ts';
 import { accountRepository } from '../db/repository/account-repository.ts';
 import { cryptPassword } from '../function/crypt.ts';
-import { AccountNotVerifiedMessage } from '../message/outbound/account-not-verified.ts';
+import { AccountPermanentBanMessage } from '../message/outbound/account-permanent-ban.ts';
+import { AccountTemporaryBanMessage } from '../message/outbound/account-temporary-ban.ts';
 import { WrongCredentialsMessage } from '../message/outbound/wrong-credentials.ts';
 import { WrongVersionMessage } from '../message/outbound/wrong-version.ts';
+import { Account } from '../model/account.ts';
 import type { LoginClient } from '../network/client.ts';
 
 class AuthService {
@@ -26,8 +28,16 @@ class AuthService {
             return client.kick();
         }
 
-        client.sendMessage(new AccountNotVerifiedMessage());
-        client.kick();
+        client.account = new Account(account);
+        if (client.account.isBanned) {
+            if (client.account.bannedUntil) {
+                client.sendMessage(new AccountTemporaryBanMessage(client.account.bannedUntil));
+            } else {
+                client.sendMessage(new AccountPermanentBanMessage());
+            }
+
+            return client.kick();
+        }
     }
 }
 

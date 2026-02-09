@@ -27,9 +27,11 @@ export abstract class Client {
     }
 
     sendMessage(message: OutboundMessage) {
+        const header = (message.constructor as typeof OutboundMessage).header;
         const data = message.serialize();
-        this.socket.write(data + MESSAGE_DELIMITER);
-        this.#logger.debug(`#${this.id} >>> ${data}`);
+
+        this.socket.write(header + data + MESSAGE_DELIMITER);
+        this.#logger.debug(`#${this.id} >>> ${header}${data}`);
     }
 
     kick() {

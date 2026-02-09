@@ -33,7 +33,7 @@ export class MessageDispatcher<T extends Client> {
     }
 
     async dispatch(client: T, message: InboundMessage): Promise<void> {
-        const id = (message.constructor as unknown as InboundMessageClass).header;
+        const id = (message.constructor as typeof InboundMessage).header;
 
         const handlers = this.#handlers.get(id);
         if (!handlers || handlers.length === 0) {
