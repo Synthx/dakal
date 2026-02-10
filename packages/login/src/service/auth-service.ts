@@ -3,6 +3,7 @@ import { accountRepository } from '../db/repository/account-repository.ts';
 import { cryptPassword } from '../function/crypt.ts';
 import { AccountPermanentBanMessage } from '../message/outbound/account-permanent-ban.ts';
 import { AccountTemporaryBanMessage } from '../message/outbound/account-temporary-ban.ts';
+import { AlreadyLoggedMessage } from '../message/outbound/already-logged.ts';
 import { WrongCredentialsMessage } from '../message/outbound/wrong-credentials.ts';
 import { WrongVersionMessage } from '../message/outbound/wrong-version.ts';
 import { Account } from '../model/account.ts';
@@ -38,6 +39,16 @@ class AuthService {
 
             return client.kick();
         }
+
+        if (client.account.isAlreadyLogged) {
+            client.sendMessage(new AlreadyLoggedMessage());
+            return client.kick();
+        }
+
+        await accountRepository.updateById(client.account.id, {
+            logged: true,
+            loggedAt: new Date(),
+        });
     }
 }
 

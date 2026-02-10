@@ -31,6 +31,25 @@ This repository is managed as a monorepo using Bun workspaces:
 - **Logging:** [Pino](https://github.com/pinojs/pino)
 - **Linting/Formatting:** [ESLint](https://eslint.org/) & [Prettier](https://prettier.io/)
 
+### 🏗️ Architecture
+
+```mermaid
+graph TD
+    Client([GameClient])
+
+    subgraph Dakal
+        DB@{ shape: cyl, label: PostgreSQL }
+        Login[Login]
+        Game[Game]
+    end
+
+    Client -- TCP --> Login
+    Client -- TCP --> Game
+
+    Login --> DB
+    Game --> DB
+```
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -87,7 +106,7 @@ bun run start
 
 ## Contributing
 
-Please read CONTRIBUTING.md for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Licence
 

@@ -6,10 +6,10 @@
 - Login with credentials
 - Permanent banned account
 - Tempo banned account
+- Already logged verification
 
 ## ToDo
 
-- Already logged verification
 - Missing nickname
 - Server list
 - Secret question
