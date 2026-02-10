@@ -8,5 +8,7 @@ export const account = pgTable('account', {
     nickname: varchar({ length: 255 }),
     banned: boolean().notNull().default(false),
     bannedUntil: timestamp(),
+    logged: boolean().notNull().default(false),
+    loggedAt: timestamp(),
     ...timestamps,
 });
