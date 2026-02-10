@@ -1,6 +1,6 @@
 import { describe, expect, it, mock } from 'bun:test';
-import { Client } from '../network/client.ts';
-import type { Socket } from '../type/server.ts';
+import { Client } from '../network';
+import type { Socket } from '../type';
 import { InboundMessage } from './inbound-message.ts';
 import { MessageDispatcher } from './message-dispatcher.ts';
 
@@ -31,6 +31,15 @@ describe('MessageDispatcher', () => {
 
         expect(handler).toHaveBeenCalled();
         expect(handler).toHaveBeenCalledWith(clientMock, msg);
+    });
+
+    it('should have correctly typed message in handler', () => {
+        const dispatcher = new MessageDispatcher();
+
+        dispatcher.on(TestMessage, (_client, message) => {
+            expect(message).toBeInstanceOf(TestMessage);
+            expect(message.data).toBeDefined();
+        });
     });
 
     it('should handle multiple handlers', async () => {

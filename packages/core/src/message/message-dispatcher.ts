@@ -3,28 +3,31 @@ import type { InboundMessageClass } from '../type';
 import { logger } from '../util';
 import type { InboundMessage } from './inbound-message.ts';
 
-type MessageHandler<T extends Client> = (client: T, message: InboundMessage) => void | Promise<void>;
+type MessageHandler<T extends Client, M extends InboundMessage = InboundMessage> = (
+    client: T,
+    message: M,
+) => void | Promise<void>;
 
 export class MessageDispatcher<T extends Client> {
     readonly #handlers = new Map<string, MessageHandler<T>[]>();
     readonly #logger = logger.child({ name: MessageDispatcher.name });
 
-    on(message: InboundMessageClass, handler: MessageHandler<T>) {
+    on<M extends InboundMessage>(message: InboundMessageClass<M>, handler: MessageHandler<T, M>) {
         const handlers = this.#handlers.get(message.header) ?? [];
-        handlers.push(handler);
+        handlers.push(handler as MessageHandler<T>);
 
         this.#handlers.set(message.header, handlers);
 
         return () => this.off(message, handler);
     }
 
-    off(message: InboundMessageClass, handler: MessageHandler<T>): void {
+    off<M extends InboundMessage>(message: InboundMessageClass<M>, handler: MessageHandler<T, M>): void {
         const handlers = this.#handlers.get(message.header);
         if (!handlers) {
             return;
         }
 
-        const index = handlers.indexOf(handler);
+        const index = handlers.indexOf(handler as MessageHandler<T, InboundMessage>);
         if (index === -1) {
             return;
         }

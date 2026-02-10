@@ -1,3 +1,4 @@
+import type { Nullable } from 'dakal-core';
 import type { AccountEntity } from '../db/type/account.ts';
 
 export class Account {
@@ -11,11 +12,19 @@ export class Account {
         return this.account.banned;
     }
 
-    get bannedUntil(): Date | null {
+    get bannedUntil(): Nullable<Date> {
         return this.account.bannedUntil;
     }
 
     get isAlreadyLogged(): boolean {
         return this.account.logged;
+    }
+
+    get nickname(): Nullable<string> {
+        return this.account.nickname;
+    }
+
+    set nickname(nickname: string) {
+        this.account.nickname = nickname;
     }
 }
