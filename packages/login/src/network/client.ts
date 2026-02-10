@@ -3,6 +3,7 @@ import { generateRandomString } from '../function/random.ts';
 import { loginMessageDispatcher } from '../message/handler.ts';
 import { HelloMessage } from '../message/outbound/hello.ts';
 import { loginMessageRegistry } from '../message/registry.ts';
+import type { Account } from '../model/account.ts';
 import type { LoginClientState } from '../type/client.ts';
 import type { Credentials } from '../type/credentials.ts';
 import { Version } from '../util/version.ts';
@@ -16,6 +17,7 @@ export class LoginClient extends Client {
     #state: LoginClientState = 'READY';
     #version?: Version;
     #credentials?: Credentials;
+    #account?: Account;
 
     get key() {
         return this.#key;
@@ -27,6 +29,14 @@ export class LoginClient extends Client {
 
     get credentials() {
         return this.#credentials;
+    }
+
+    set account(account: Account) {
+        this.#account = account;
+    }
+
+    get account(): Account | undefined {
+        return this.#account;
     }
 
     override handleData(data: string): void {

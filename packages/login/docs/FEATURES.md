@@ -4,11 +4,11 @@
 
 - Version verification
 - Login with credentials
+- Permanent banned account
+- Tempo banned account
 
 ## ToDo
 
-- Permanent banned account
-- Tempo banned account
 - Already logged verification
 - Missing nickname
 - Server list

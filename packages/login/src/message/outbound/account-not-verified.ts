@@ -1,9 +1,9 @@
-import { OutboundMessage } from 'dakal-core';
+import { EMPTY_STRING, OutboundMessage } from 'dakal-core';
 
 export class AccountNotVerifiedMessage extends OutboundMessage {
     static override readonly header = 'AlEm';
 
     override serialize(): string {
-        return AccountNotVerifiedMessage.header;
+        return EMPTY_STRING;
     }
 }
