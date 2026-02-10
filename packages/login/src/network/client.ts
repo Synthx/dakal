@@ -1,5 +1,6 @@
 import { Client, logger } from 'dakal-core';
 import { generateRandomString } from '../function/random.ts';
+import { AccountNicknameMessage } from '../message/exchange/account-nickname.ts';
 import { loginMessageDispatcher } from '../message/handler.ts';
 import { HelloMessage } from '../message/outbound/hello.ts';
 import { loginMessageRegistry } from '../message/registry.ts';
@@ -39,6 +40,10 @@ export class LoginClient extends Client {
         return this.#account;
     }
 
+    set state(state: LoginClientState) {
+        this.#state = state;
+    }
+
     override handleData(data: string): void {
         super.handleData(data);
 
@@ -55,6 +60,12 @@ export class LoginClient extends Client {
                         encodedPassword,
                     };
                     this.#state = 'READY';
+                    break;
+                }
+                case 'WAITING_NICKNAME': {
+                    this.#state = 'READY';
+
+                    void loginMessageDispatcher.dispatch(this, new AccountNicknameMessage(data));
                     break;
                 }
                 case 'READY': {

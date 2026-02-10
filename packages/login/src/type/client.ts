@@ -1,1 +1,1 @@
-export type LoginClientState = 'WAITING_VERSION' | 'WAITING_CREDENTIALS' | 'READY';
+export type LoginClientState = 'WAITING_VERSION' | 'WAITING_CREDENTIALS' | 'WAITING_NICKNAME' | 'READY';
