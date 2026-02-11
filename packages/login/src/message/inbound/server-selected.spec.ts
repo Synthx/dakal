@@ -15,14 +15,20 @@ describe('ServerSelectedMessage', () => {
             expect(message.serverId).toBe(42);
         });
 
-        it('should throw an error for invalid server ID (non-numeric)', () => {
+        it('should return a message with undefined serverId for invalid server ID (non-numeric)', () => {
             const data = 'invalid';
-            expect(() => ServerSelectedMessage.parse(data)).toThrow('Invalid server id');
+            const message = ServerSelectedMessage.parse(data);
+
+            expect(message).toBeInstanceOf(ServerSelectedMessage);
+            expect(message.serverId).toBeUndefined();
         });
 
-        it('should throw an error for empty data', () => {
+        it('should return a message with undefined serverId for empty data', () => {
             const data = '';
-            expect(() => ServerSelectedMessage.parse(data)).toThrow('Invalid server id');
+            const message = ServerSelectedMessage.parse(data);
+
+            expect(message).toBeInstanceOf(ServerSelectedMessage);
+            expect(message.serverId).toBeUndefined();
         });
 
         it('should parse 0 as a valid server ID', () => {

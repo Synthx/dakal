@@ -34,6 +34,10 @@ export abstract class Client {
         this.#logger.debug(`#${this.id} >>> ${header}${data}`);
     }
 
+    sendMessages(messages: OutboundMessage[]) {
+        messages.forEach((m) => this.sendMessage(m));
+    }
+
     kick() {
         this.socket.close();
         this.#logger.debug(`#${this.id} !!! closed`);
