@@ -1,5 +1,5 @@
 import type { Nullable } from 'dakal-core';
-import type { AccountEntity } from '../db/type/account.ts';
+import type { AccountEntity, AccountLevel } from '../db/type/account.ts';
 
 export class Account {
     constructor(readonly account: AccountEntity) {}
@@ -26,5 +26,13 @@ export class Account {
 
     set nickname(nickname: string) {
         this.account.nickname = nickname;
+    }
+
+    get level(): AccountLevel {
+        return this.account.level;
+    }
+
+    get secretQuestion(): string {
+        return this.account.secretQuestion;
     }
 }
